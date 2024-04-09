@@ -1,22 +1,19 @@
 package com.example.rqchallenge.employees.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.example.rqchallenge.employees.datasource.EmployeeDataSource;
 import com.example.rqchallenge.employees.model.Employee;
 import com.example.rqchallenge.employees.model.EmployeeResponse;
 import com.example.rqchallenge.employees.model.EmployeesResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
+@Slf4j
 public class EmployeeService {
-	
-	public static final Logger LOGGER = LoggerFactory.getLogger(EmployeeService.class);
 	
 	@Autowired
 	private EmployeeDataSource employeeDataSource;
@@ -45,7 +42,7 @@ public class EmployeeService {
 	}
 	
 	public Employee getEmployeeById(String id) throws Exception{
-		EmployeeResponse employeeResponse = employeeDataSource.getAllEmployeeById(id);
+		EmployeeResponse employeeResponse = employeeDataSource.getEmployeeById(id);
 		
 		return employeeResponse.getData();
 	}

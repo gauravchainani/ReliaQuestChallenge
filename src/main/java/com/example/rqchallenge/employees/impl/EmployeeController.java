@@ -1,9 +1,9 @@
 package com.example.rqchallenge.employees.impl;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
+import com.example.rqchallenge.employees.IEmployeeController;
+import com.example.rqchallenge.employees.model.Employee;
+import com.example.rqchallenge.employees.service.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.rqchallenge.employees.IEmployeeController;
-import com.example.rqchallenge.employees.model.Employee;
-import com.example.rqchallenge.employees.service.EmployeeService;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/employee")
 @RestController()
+@Slf4j
 public class EmployeeController implements IEmployeeController {
 
 	@Autowired
@@ -28,7 +29,7 @@ public class EmployeeController implements IEmployeeController {
 		try {
 			List<Employee> employeeList = employeeService.getAllEmployees();
 			responseEntity = new ResponseEntity<>(employeeList, HttpStatus.OK);
-		}catch(IOException e) {
+		} catch(IOException e) {
 			throw e;
 		} catch(Exception e) {
 			responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
