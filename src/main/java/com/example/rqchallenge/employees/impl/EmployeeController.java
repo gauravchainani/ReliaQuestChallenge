@@ -4,18 +4,16 @@ import com.example.rqchallenge.employees.IEmployeeController;
 import com.example.rqchallenge.employees.model.Employee;
 import com.example.rqchallenge.employees.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@RequestMapping("/employee")
 @RestController()
 @Slf4j
 public class EmployeeController implements IEmployeeController {
@@ -24,66 +22,87 @@ public class EmployeeController implements IEmployeeController {
 	private EmployeeService employeeService;
 	
 	@Override
-	public ResponseEntity<List<Employee>> getAllEmployees() throws IOException {
-		ResponseEntity<List<Employee>> responseEntity = null;
+	public ResponseEntity<List<Employee>> getAllEmployees() {
 		try {
 			List<Employee> employeeList = employeeService.getAllEmployees();
-			responseEntity = new ResponseEntity<>(employeeList, HttpStatus.OK);
-		} catch(IOException e) {
-			throw e;
+			if(employeeList == null || employeeList.isEmpty())
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			return ResponseEntity.status(HttpStatus.OK).body(employeeList);
 		} catch(Exception e) {
-			responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			log.error("Error getting all employees", e);
+			return ResponseEntity.internalServerError().build();
 		}
-		return responseEntity;
 	}
 
 	@Override
-	@GetMapping("/search/{searchString}")
 	public ResponseEntity<List<Employee>> getEmployeesByNameSearch(String searchString) {
-		ResponseEntity<List<Employee>> responseEntity = null;
 		try {
 			List<Employee> employeeList = employeeService.getEmployeesByNameSearch(searchString);
-			responseEntity = new ResponseEntity<>(employeeList, HttpStatus.OK);
-		}catch(Exception e) {
-			responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			if(employeeList == null || employeeList.isEmpty())
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			return ResponseEntity.status(HttpStatus.OK).body(employeeList);
+		} catch(Exception e) {
+			log.error("Error searching employee : " + searchString, e);
+			return ResponseEntity.internalServerError().build();
 		}
-		return responseEntity;
 	}
 
 	@Override
 	public ResponseEntity<Employee> getEmployeeById(String id) {
-		ResponseEntity<Employee> responseEntity = null;
 		try {
 			Employee employee = employeeService.getEmployeeById(id);
-			responseEntity = new ResponseEntity<>(employee, HttpStatus.OK);
-		}catch(Exception e) {
-			responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			if(employee == null)
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			return ResponseEntity.status(HttpStatus.OK).body(employee);
+		} catch(Exception e) {
+			log.error("Error getting employee by id ", e);
+			return ResponseEntity.internalServerError().build();
 		}
-		return responseEntity;
 	}
 
 	@Override
 	public ResponseEntity<Integer> getHighestSalaryOfEmployees() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return ResponseEntity.status(HttpStatus.OK).body(employeeService.getHighestSalary());
+		} catch(Exception e) {
+			log.error("Error getting highest salary of employees ", e);
+			return ResponseEntity.internalServerError().build();
+		}
 	}
 
 	@Override
 	public ResponseEntity<List<String>> getTopTenHighestEarningEmployeeNames() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			List<String> employeeList = employeeService.getTopNHighestEarningEmployeeNames(10); // This can be extracted in static variable
+			if(employeeList == null || employeeList.isEmpty())
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+			return ResponseEntity.status(HttpStatus.OK).body(employeeList);
+		} catch(Exception e) {
+			log.error("Error getting top ten highest earning employees ", e);
+			return ResponseEntity.internalServerError().build();
+		}
 	}
 
 	@Override
 	public ResponseEntity<Employee> createEmployee(Map<String, Object> employeeInput) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			Employee employee = employeeService.createEmployee(employeeInput);
+			return ResponseEntity.status(HttpStatus.OK).body(employee);
+		} catch(Exception e) {
+			log.error("Error creating employee ", e);
+			return ResponseEntity.internalServerError().build();
+		}
 	}
 
 	@Override
 	public ResponseEntity<String> deleteEmployeeById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			employeeService.deleteEmployee(id);
+			return ResponseEntity.status(HttpStatus.OK).build();
+		} catch(Exception e) {
+			log.error("Error deleting employee with id : " + id, e);
+			return ResponseEntity.internalServerError().build();
+		}
 	}
 
 }

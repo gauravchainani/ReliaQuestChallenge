@@ -14,13 +14,16 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'javax.inject:javax.inject:1'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot2:1.7.0'
 	compileOnly 'org.projectlombok:lombok:1.18.32'
 	annotationProcessor 'org.projectlombok:lombok:1.18.32'
-    implementation group: 'org.springframework.retry', name: 'spring-retry', version: '2.0.5'
-    //implementation 'org.springframework:spring-aspects:6.0.11'
-    compileOnly group: 'org.springframework.retry', name: 'spring-retry', version: '1.0.3.RELEASE'
+    implementation group: 'org.json', name: 'json', version: '20240303'
+
+    //test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.0.0'
 }
 
 test {
