@@ -1,39 +1,21 @@
 package com.example.rqchallenge.employees.datasource;
 
-import io.github.resilience4j.retry.annotation.Retry;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+
+import com.example.rqchallenge.util.RestUtil;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class EmployeeDataSource {
 
 	private static final String baseurl = "https://dummy.restapiexample.com/api/v1/";
-
-	@Autowired(required = false)
-	private RestTemplate restTemplate;
-
-	@Retry(name = "getCall")
-	public <T> T getCall(String url, Class<T> classType){
-		return restTemplate.getForObject(url, classType);
-	}
-
-	@Retry(name = "postCall")
-	public <T> T postCall(String url, Object request, Class<T> classType){
-		return restTemplate.postForObject(url, request, classType);
-	}
-
-	@Retry(name = "deleteCall")
-	public void deleteCall(String url){
-		restTemplate.delete(url);
-	}
-
+	
 	public String getAllEmployees() {
 		String url = baseurl + "employees";
 		try{
-			return getCall(url, String.class);
+			return RestUtil.getCall(url, String.class);
 		} catch (Exception e){
 			log.error("Error when calling REST API " + url, e);
 			return getAllEmployeesMockData();
@@ -43,7 +25,7 @@ public class EmployeeDataSource {
 	public String getEmployeeById(String id) {
 		String url = baseurl + "employee/" + id;
 		try{
-			return getCall(url, String.class);
+			return RestUtil.getCall(url, String.class);
 		} catch (Exception e){
 			log.error("Error when calling REST API " + url, e);
 			return getEmployeeByIdMockdata();
@@ -51,21 +33,22 @@ public class EmployeeDataSource {
 	}
 
 	public String createEmployee(Object request) {
-		String url = baseurl + "create/";
+		String url = baseurl + "create";
 		try {
-			return postCall(url, request, String.class);
+			return RestUtil.postCall(url, request, String.class);
 		} catch (Exception e) {
 			log.error("Error when calling REST API : " + url, e);
 			return createEmployeeMockData();
 		}
 	}
 
-	public void deleteEmployee(String id) {
+	public void deleteEmployee(String id) throws Exception{
 		String url = baseurl + "delete/" + id;
 		try {
-			deleteCall(url);
+			RestUtil.deleteCall(url);
 		} catch (Exception e) {
 			log.error("Error when calling REST API : " + url, e);
+			throw e;
 		}
 	}
 
@@ -82,6 +65,6 @@ public class EmployeeDataSource {
 
 	public static String createEmployeeMockData(){
 		log.info("Returning mock data for createEmployee");
-		return "{\"status\":\"success\",\"data\":{\"name\":\"Gaurav\",\"salary\":\"800000\",\"age\":\"34\",\"id\":7494},\"message\":\"Successfully!Recordhasbeenadded.\"}";
+		return "{\"status\":\"success\",\"data\":{\"name\":\"Gaurav_mockData\",\"salary\":\"800000\",\"age\":\"34\",\"id\":7494},\"message\":\"Successfully!Recordhasbeenadded.\"}";
 	}
 }

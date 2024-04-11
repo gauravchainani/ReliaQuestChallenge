@@ -19,13 +19,17 @@ public class EmployeeService {
 	private EmployeeDataSource employeeDataSource;
 
 	ObjectMapper objectMapper = new ObjectMapper();
+	
+	private String JSON_NODE_DATA = "data";
 
 	public List<Employee> getAllEmployees() throws Exception{
 		String employeesResponse = employeeDataSource.getAllEmployees();
+		log.trace("getAllEmployees repsonse : " + employeesResponse);
 		try{
 			JSONObject responseJson = new JSONObject(employeesResponse);
-			if(responseJson.has(Constants.JSON_NODE_DATA))
-				return Arrays.asList(objectMapper.readValue(responseJson.get(Constants.JSON_NODE_DATA).toString(), Employee[].class));
+			if(responseJson.has(JSON_NODE_DATA))
+				return Arrays.asList(objectMapper.readValue(responseJson.get(JSON_NODE_DATA).toString(), Employee[].class));
+			log.debug("No Data field in response json");
 			return null;
 		} catch (Exception e) {
 			log.error("Error while parsing all employees data", e);
@@ -46,10 +50,12 @@ public class EmployeeService {
 	
 	public Employee getEmployeeById(String id) throws Exception{
 		String employeeResponse = employeeDataSource.getEmployeeById(id);
+		log.trace("getEmployeeById repsonse : " + employeeResponse);
 		try{
 			JSONObject responseJson = new JSONObject(employeeResponse);
-			if(responseJson.has(Constants.JSON_NODE_DATA))
-				return objectMapper.readValue(responseJson.get(Constants.JSON_NODE_DATA).toString(), Employee.class);
+			if(responseJson.has(JSON_NODE_DATA))
+				return objectMapper.readValue(responseJson.get(JSON_NODE_DATA).toString(), Employee.class);
+			log.debug("No Data field in response json");
 			return null;
 		} catch (Exception e){
 			log.error("Error while parsing employee data for id : " + id, e);
@@ -83,12 +89,14 @@ public class EmployeeService {
 		return null;
 	}
 
-	public Employee createEmployee(Map<String, Object> employeeInput) throws Exception{
+	public CreateEmployeeResponse createEmployee(Map<String, Object> employeeInput) throws Exception{
 		String createEmployeeResponse = employeeDataSource.createEmployee(employeeInput);
+		log.trace("createEmployee repsonse : " + createEmployeeResponse);
 		try{
 			JSONObject responseJson = new JSONObject(createEmployeeResponse);
-			if(responseJson.has(Constants.JSON_NODE_DATA))
-				return objectMapper.readValue(responseJson.get(Constants.JSON_NODE_DATA).toString(), Employee.class);
+			if(responseJson.has(JSON_NODE_DATA))
+				return objectMapper.readValue(responseJson.get(JSON_NODE_DATA).toString(), CreateEmployeeResponse.class);
+			log.debug("No Data field in response json");
 			return null;
 		} catch (Exception e){
 			log.error("Error while parsing employee data : " + employeeInput, e);
@@ -96,7 +104,7 @@ public class EmployeeService {
 		}
 	}
 
-	public void deleteEmployee(String id) {
+	public void deleteEmployee(String id) throws Exception{
 		employeeDataSource.deleteEmployee(id);
 	}
 }

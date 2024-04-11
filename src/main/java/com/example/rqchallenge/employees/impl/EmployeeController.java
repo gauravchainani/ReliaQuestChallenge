@@ -1,18 +1,19 @@
 package com.example.rqchallenge.employees.impl;
 
-import com.example.rqchallenge.employees.IEmployeeController;
-import com.example.rqchallenge.employees.model.Employee;
-import com.example.rqchallenge.employees.service.EmployeeService;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import com.example.rqchallenge.employees.IEmployeeController;
+import com.example.rqchallenge.employees.model.CreateEmployeeResponse;
+import com.example.rqchallenge.employees.model.Employee;
+import com.example.rqchallenge.employees.service.EmployeeService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @RestController()
 @Slf4j
@@ -84,9 +85,9 @@ public class EmployeeController implements IEmployeeController {
 	}
 
 	@Override
-	public ResponseEntity<Employee> createEmployee(Map<String, Object> employeeInput) {
+	public ResponseEntity<CreateEmployeeResponse> createEmployee(Map<String, Object> employeeInput) {
 		try {
-			Employee employee = employeeService.createEmployee(employeeInput);
+			CreateEmployeeResponse employee = employeeService.createEmployee(employeeInput);
 			return ResponseEntity.status(HttpStatus.OK).body(employee);
 		} catch(Exception e) {
 			log.error("Error creating employee ", e);
